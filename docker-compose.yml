@@ -1,0 +1,28 @@
+version: '3.8'
+
+services:
+  juice:
+    image: bkimminich/juice-shop
+    ports:
+      - 3000:3000
+    networks:
+      - lab-network
+  ## Coraza WAF con Caddy
+  caddy:
+    image: gbe0/coraza:latest
+    depends_on:
+      - juice
+    networks:
+      - lab-network
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - CADDY_REVERSE_PROXY=juice:3000
+      - CORAZA_SECRULEENGINE=On
+
+## Redes 
+networks:
+  ## Red usado en los servicios
+  lab-network:
+

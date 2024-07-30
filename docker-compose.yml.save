@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+
+  ## The "whoami" container
+  ## This is the container that the WAF will be protecting
+  #whoami:
+  #  image: traefik/whoami
+  #  networks:
+  #    - whoami
+
+  juiceshop_prod:
+    image: bkimminich/juice-shop
+    networks:
+      - lab-network
+     
+
+  ## Coraza WAF con Caddy
+  caddy:
+    image: gbe0/coraza:latest
+    #depends_on:
+    #  - whoami
+    networks:
+      - lab-network
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - CADDY_REVERSE_PROXY=whoami:80
+      - CORAZA_SECRULEENGINE=On
+
+## Redes 
+networks:
+  ## Red usado en los servicios
+  lab-network:
+
